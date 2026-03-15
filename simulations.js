@@ -40,6 +40,7 @@ document.addEventListener('DOMContentLoaded', function () {
     // --- 2. Gravity Box Simulation ---
     // fixing taeyang's ai ahh code
     // subtracts arrays (number arrays)
+
     function arraySub (e,x) {
         const sArray = [];
         for (let i = 0; i < e.length && i < x.length; i++) {
@@ -98,8 +99,10 @@ document.addEventListener('DOMContentLoaded', function () {
             }
 
             update() {
+                this.dy += 0.5;
+                console.log(this.y);
+
                 if (this.y + radi + this.dy - 1> canvas.height) {
-                    this.dy = this.dy * 0.8
                     this.edges("vert", canvas.height - this.y - radi - this.dy - 1);
                 }
 
@@ -116,13 +119,11 @@ document.addEventListener('DOMContentLoaded', function () {
                 }
                 this.x += this.dx;
                 this.y += this.dy;
-                this.dy += 0.5;
 
                 this.draw();
             }
             // checks for collision (may add quad tree)
             collcheck() {
-                console.log("hi");
                 let ball1 = undefined;
                 let ball2 = undefined;
                 for (let i = balls.indexOf(this) + 1; i < balls.length; i++) {
@@ -169,7 +170,7 @@ document.addEventListener('DOMContentLoaded', function () {
                         break;
                     case "horz":
                         this.dx = -this.dx;
-                        console.log(amount);
+                        this.x += amount;
                         break;
                 }
 
@@ -181,10 +182,14 @@ document.addEventListener('DOMContentLoaded', function () {
             requestAnimationFrame(animate);
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             balls.forEach(ball  => ball.update());
-            balls.forEach(ball => ball.collcheck());
+            for (let i = 0; i < 20; i++) {
+                balls.forEach(ball => ball.collcheck());
+            }
         }
 
+        
         animate();
+ 
 
         // Add ball on click
         canvas.addEventListener('mousedown', (e) => {
@@ -197,6 +202,7 @@ document.addEventListener('DOMContentLoaded', function () {
         clearBtn.addEventListener('click', () => {
             balls = [];
         });
+        console.log(canvas.height);
     }
 
     // --- 3. Click Speed Test ---

@@ -99,7 +99,6 @@ document.addEventListener('DOMContentLoaded', function () {
             }
 
             update() {
-                this.dy += 0.5;
                 console.log(this.y);
 
                 if (this.y + radi + this.dy - 1> canvas.height) {
@@ -167,6 +166,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 switch (type) {
                     case "vert":
                         this.dy = -this.dy;
+                        this.y += amount;
                         break;
                     case "horz":
                         this.dx = -this.dx;
@@ -182,7 +182,7 @@ document.addEventListener('DOMContentLoaded', function () {
             requestAnimationFrame(animate);
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             balls.forEach(ball  => ball.update());
-            for (let i = 0; i < 20; i++) {
+            for (let i = 0; i < 100; i++) {
                 balls.forEach(ball => ball.collcheck());
             }
         }

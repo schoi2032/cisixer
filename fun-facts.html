@@ -33,23 +33,22 @@
         </section>
        
         <!-- Trivia Section -->
-        <div class="trivia-box">
-  <p><strong>Trivia:</strong> What planet is known as the Red Planet?</p>
-  <button onclick="toggleAnswer()">Show Answer</button>
-  <p id="answer" style="display:none;">Mars</p>
-</div>
-
-<script>
+        <script>
 function toggleAnswer() {
   const answer = document.getElementById("answer");
   answer.style.display = answer.style.display === "none" ? "block" : "none";
 }
 </script>
+        <div class="trivia-box">
+  <p><strong>Trivia:</strong> What planet is known as the Red Planet?</p>
+  <button onclick="toggleAnswer()">Show Answer</button>
+  <p id="answer_1" style="display:none;">Mars</p>
+</div>
         
         <div class="trivia-box">
   <p><strong>Trivia:</strong> What is the biggest mammal that lives in this world?</p>
   <button onclick="toggleAnswer()">Show Answer</button>
-  <p id="answer" style="display:none;">Blue Whale</p>
+  <p id="answer_2" style="display:none;">Blue Whale</p>
 </div>
 
 <script>

@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Minimalist Sudoku</title>
+    <style>
+        :root {
+            --bg: #f0f2f5;
+            --cell-size: 45px;
+            --border-thick: 2px solid #333;
+            --border-thin: 1px solid #ccc;
+            --primary: #4a90e2;
+        }
+
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: var(--bg); display: flex; flex-direction: column; align-items: center; padding: 20px; }
+        h1 { color: #333; margin-bottom: 10px; }
+        
+        .controls { margin-bottom: 20px; display: flex; gap: 10px; }
+        button { padding: 10px 20px; cursor: pointer; border: none; border-radius: 5px; background: var(--primary); color: white; font-weight: bold; transition: opacity 0.2s; }
+        button:hover { opacity: 0.8; }
+        button.active { background: #2c3e50; }
+
+        #grid { 
+            display: grid; 
+            grid-template-columns: repeat(9, var(--cell-size)); 
+            grid-template-rows: repeat(9, var(--cell-size)); 
+            border: var(--border-thick);
+            background: white;
+        }
+
+        .cell {
+            width: var(--cell-size);
+            height: var(--cell-size);
+            border: var(--border-thin);
+            box-sizing: border-box;
+            text-align: center;
+            font-size: 1.2rem;
+            line-height: var(--cell-size);
+            cursor: pointer;
+            outline: none;
+        }
+
+        /* Subgrid borders */
+        .cell:nth-child(3n) { border-right: var(--border-thick); }
+        .cell:nth-child(9n) { border-right: var(--border-thin); } /* Reset right edge */
+        .cell:nth-child(n+19):nth-child(-n+27),
+        .cell:nth-child(n+46):nth-child(-n+54) { border-bottom: var(--border-thick); }
+
+        .cell:focus { background: #e3f2fd; }
+        .cell.readonly { font-weight: bold; color: #333; background: #f9f9f9; cursor: default; }
+        .cell.error { color: #e74c3c; }
+        
+        .message { margin-top: 15px; font-weight: bold; height: 20px; }
+    </style>
+</head>
+<body>
+
+    <h1>Sudoku</h1>
+
+    <div class="controls">
+        <button onclick="startGame('easy')">Easy</button>
+        <button onclick="startGame('medium')">Medium</button>
+        <button onclick="startGame('hard')">Hard</button>
+    </div>
+
+    <div id="grid"></div>
+    <div class="message" id="msg"></div>
+
+    <script>
+        const gridElement = document.getElementById('grid');
+        const msgElement = document.getElementById('msg');
+        let solution = [];
+
+        function startGame(level) {
+            msgElement.innerText = "";
+            const board = generateBoard();
+            solution = board.map(row => [...row]);
+            
+            let holes = 30; // Easy
+            if (level === 'medium') holes = 45;
+            if (level === 'hard') holes = 55;
+
+            const puzzle = pokeHoles(board, holes);
+            renderBoard(puzzle);
+        }
+
+        function generateBoard() {
+            const board = Array.from({ length: 9 }, () => Array(9).fill(0));
+            solve(board);
+            return board;
+        }
+
+        function solve(board) {
+            for (let row = 0; row < 9; row++) {
+                for (let col = 0; col < 9; col++) {
+                    if (board[row][col] === 0) {
+                        const nums = Array.from({length: 9}, (_, i) => i + 1).sort(() => Math.random() - 0.5);
+                        for (let n of nums) {
+                            if (isValid(board, row, col, n)) {
+                                board[row][col] = n;
+                                if (solve(board)) return true;
+                                board[row][col] = 0;
+                            }
+                        }
+                        return false;
+                    }
+                }
+            }
+            return true;
+        }
+
+        function isValid(board, row, col, n) {
+            for (let i = 0; i < 9; i++) {
+                if (board[row][i] === n || board[i][col] === n) return false;
+                const sRow = 3 * Math.floor(row / 3) + Math.floor(i / 3);
+                const sCol = 3 * Math.floor(col / 3) + i % 3;
+                if (board[sRow][sCol] === n) return false;
+            }
+            return true;
+        }
+
+        function pokeHoles(board, count) {
+            const puzzle = board.map(row => [...row]);
+            let removed = 0;
+            while (removed < count) {
+                const r = Math.floor(Math.random() * 9);
+                const c = Math.floor(Math.random() * 9);
+                if (puzzle[r][c] !== 0) {
+                    puzzle[r][c] = 0;
+                    removed++;
+                }
+            }
+            return puzzle;
+        }
+
+        function renderBoard(puzzle) {
+            gridElement.innerHTML = '';
+            for (let r = 0; r < 9; r++) {
+                for (let c = 0; c < 9; c++) {
+                    const cell = document.createElement('div');
+                    cell.classList.add('cell');
+                    if (puzzle[r][c] !== 0) {
+                        cell.innerText = puzzle[r][c];
+                        cell.classList.add('readonly');
+                    } else {
+                        cell.contentEditable = true;
+                        cell.addEventListener('input', (e) => validateInput(e, r, c));
+                    }
+                    gridElement.appendChild(cell);
+                }
+            }
+        }
+
+        function validateInput(e, r, c) {
+            const val = e.target.innerText.trim();
+            const num = parseInt(val);
+
+            if (!/^[1-9]$/.test(val)) {
+                e.target.innerText = "";
+                return;
+            }
+
+            if (num === solution[r][c]) {
+                e.target.classList.remove('error');
+                checkWin();
+            } else {
+                e.target.classList.add('error');
+            }
+        }
+
+        function checkWin() {
+            const cells = document.querySelectorAll('.cell');
+            const isComplete = Array.from(cells).every(cell => cell.innerText !== "" && !cell.classList.contains('error'));
+            if (isComplete) msgElement.innerText = "🎉 You solved it!";
+        }
+
+        // Initialize first game
+        startGame('easy');
+    </script>
+</body>
+</html>

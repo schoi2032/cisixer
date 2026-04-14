@@ -6,11 +6,9 @@
     <link rel ="icon" href="icon.ico">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sixers - Login (indev)</title>
+    <title>Sixers - Login</title>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <script type="module" src="auth.js" defer></script>
-    <script type="module" src="/dist/bundle.js"></script>
 </head>
 
 <div id="nav"></div>
@@ -27,23 +25,21 @@
         </header>
         <div id="nav"> </div>
     <section class="section home-bulletin-panel">
-        <form>
-            <h3>Login or Sign Up</h3>
-            <label for="username">Username:</label>
-            <input type="email" placeholder="Email" id="email" required>
-            <br>
-
-            <label for="password">Password:</label>
-            <input type="password" placeholder="Password" id="password" required>
-            <br>
-
-            <button type="submit" id ="submit">Create Account</button>
-            <div class="social">
-                <div class="go" id = "google"><i class="fab fa-google"></i> Google</div>
-                <div class="go" id = "facebook"><i class="fab fa-facebook-f"></i> Facebook... but who uses facebook</div>
+        <div class="login-container">
+            <h3>Sign in to Sixers Website</h3>
+            <p class="login-subtitle">Use your @chadwickschool.org email</p>
+            
+            <div id="error-message" class="error-message" style="display: none;"></div>
+            
+            <button id="google-signin-button" class="google-login-btn">
+                <i class="fab fa-google"></i> Sign in with Google
+            </button>
+            
+            <div class="login-info">
+                <p><strong>ℹ️ Note:</strong> You must use a <strong>@chadwickschool.org</strong> email address to sign in.</p>
             </div>
-        </form>
+        </div>
     </section>
     <div id="footer"></div>
-  <script src="script.js"></script>
+  <script type="module" src="auth.js" defer></script>
 </body>

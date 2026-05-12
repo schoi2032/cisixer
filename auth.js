@@ -2,9 +2,12 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-app.js";
 import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-auth.js";  
 
+// API Keys from environments
+const apiKey = process.env.API_KEY;
+
 // Firebase configuration
 const firebaseConfig = {
-  apiKey: "AIzaSyDjW3iIlIDjQVMurDu-EDwQa-OHvH9oS7U",
+  apiKey: "apiKey",
   authDomain: "sixers-18889.firebaseapp.com",
   projectId: "sixers-18889",
   storageBucket: "sixers-18889.firebasestorage.app",

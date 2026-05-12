@@ -7,7 +7,7 @@ const apiKey = process.env.API_KEY;
 
 // Firebase configuration
 const firebaseConfig = {
-  apiKey: "apiKey",
+  apiKey: apiKey,
   authDomain: "sixers-18889.firebaseapp.com",
   projectId: "sixers-18889",
   storageBucket: "sixers-18889.firebasestorage.app",

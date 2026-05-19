@@ -89,7 +89,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 this.radius = radi;
                 this.color = `hsl(${Math.random() * 360}, 70%, 60%)`;
             }
-
+//meow creatures are better
             draw() {
                 ctx.beginPath();
                 ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);

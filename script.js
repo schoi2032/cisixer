@@ -1,3 +1,81 @@
+const SITE_PASSWORD = 'dolphins';
+const AUTH_FLAG = 'sixers-site-access';
+
+function setAccessAllowed() {
+  sessionStorage.setItem(AUTH_FLAG, 'true');
+  localStorage.setItem(AUTH_FLAG, 'true');
+}
+
+function accessAllowed() {
+  return sessionStorage.getItem(AUTH_FLAG) === 'true' || localStorage.getItem(AUTH_FLAG) === 'true';
+}
+
+function allowDirectInternalReferrer() {
+  const referrer = document.referrer;
+  if (!referrer) {
+    return;
+  }
+
+  try {
+    const referrerUrl = new URL(referrer);
+    if (referrerUrl.origin === window.location.origin && referrerUrl.href !== window.location.href) {
+      setAccessAllowed();
+    }
+  } catch (error) {
+    // Ignore invalid referrers.
+  }
+}
+
+function promptForPassword() {
+  let attempts = 0;
+  while (attempts < 3 && !accessAllowed()) {
+    const answer = prompt('Enter the password to access this page:');
+    if (answer === null) {
+      break;
+    }
+    if (answer === SITE_PASSWORD) {
+      setAccessAllowed();
+      return;
+    }
+    attempts += 1;
+    alert('Incorrect password. Please try again.');
+  }
+
+  if (!accessAllowed()) {
+    document.body.innerHTML = '<div class="password-blocked" style="padding: 3rem; text-align: center;"><h1>Access denied</h1><p>You must enter the correct password to view this site.</p></div>';
+  }
+}
+
+document.addEventListener('click', (event) => {
+  const anchor = event.target.closest('a[href]');
+  if (!anchor) {
+    return;
+  }
+
+  const href = anchor.getAttribute('href');
+  if (!href || href.startsWith('#') || href.startsWith('javascript:') || href.startsWith('mailto:')) {
+    return;
+  }
+
+  if (anchor.target && anchor.target !== '_self') {
+    return;
+  }
+
+  try {
+    const url = new URL(href, window.location.href);
+    if (url.origin === window.location.origin) {
+      setAccessAllowed();
+    }
+  } catch (error) {
+    // Ignore invalid URLs.
+  }
+});
+
+allowDirectInternalReferrer();
+if (!accessAllowed()) {
+  promptForPassword();
+}
+
 document.addEventListener('DOMContentLoaded', () => {
   initComedySlideshow();
 
@@ -184,7 +262,8 @@ fetch("../nav.html")
     .then(response => response.text())
     .then(data => {
     document.getElementById("nav").innerHTML = data;
-    switch (type) {
+    const currentPageType = typeof type !== 'undefined' ? type : null;
+    switch (currentPageType) {
     case "0":
         document.querySelector("#nav a[href='index.html']").classList.add("active");
         break;
